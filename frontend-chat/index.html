@@ -1,39 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <style>
+      .material-symbols-rounded {
+        font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 48;
+      }
+    </style>
     <title>Document</title>
-</head>
-<body>
-    
-    <form>
-        <input name="msg">
-    </form>
-    
-    <div class="display">
-    </div>
+  </head>
+  <body>
+    <main>
+      <div class="display"></div>
+      <form class="input">
+        <input name="msg" />
+        <button class="material-symbols-rounded send">send</button>
+      </form>
+    </main>
 
     <script>
-        const display = document.querySelector(".display")
-        const form = document.querySelector("form")
+      const display = document.querySelector(".display")
+      const form = document.querySelector("form")
 
-        var ws = new WebSocket('ws://127.0.0.1:8080')
+      var ws = new WebSocket("ws://127.0.0.1:8080")
 
-        ws.addEventListener("message", ev => {
-            const data = document.createElement("div")
-            data.innerHTML = ev.data
-            display.append(data)
-        })
+      let userMessages = []
 
+      ws.addEventListener("message", (ev) => {
+        const data = document.createElement("div")
+        if (ev.data === "" || ev.data === " ") {
+          return
+        }
+        if (ev.data === userMessages[userMessages.length - 1]) {
+          data.classList.add("user")
+        } else {
+          data.classList.add("other")
+        }
+        const msg = document.createElement("p")
+        msg.innerHTML = ev.data
+        data.append(msg)
+        display.append(data)
+      })
 
-        form.addEventListener("submit", ev => {
-            ev.preventDefault()
-            ws.send(form.msg.value)
-            form.msg.value = ""
-        })
-
+      form.addEventListener("submit", (ev) => {
+        ev.preventDefault()
+        userMessages.push(form.msg.value)
+        ws.send(form.msg.value)
+        form.msg.value = ""
+      })
     </script>
-</body>
+  </body>
 </html>

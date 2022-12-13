@@ -12,6 +12,4 @@ wss.on('connection', ws => {
       cws.send(data.toString())
     })
   })
-
-  ws.send('Oi como vai querido(a)!?')
 })
